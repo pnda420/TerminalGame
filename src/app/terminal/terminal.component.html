@@ -1,0 +1,12 @@
+<div class="terminal" #terminalContainer>
+    <div class="scanlines"></div>
+    <ul class="terminal-output">
+      <!-- Iteriere über die Befehlshistorie und zeige jeden Eintrag an -->
+      <li *ngFor="let command of commandHistory">{{ command }}</li>
+    </ul>
+    <div class="terminal-input">
+      <span class="prompt">$</span>
+      <input #terminalInput type="text" class="terminal-input-field" [(ngModel)]="currentInput" (keydown)="onEnterPress($event)" autofocus />
+    </div>
+  </div>
+  
