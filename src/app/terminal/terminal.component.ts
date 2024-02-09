@@ -16,35 +16,86 @@ export class TerminalComponent implements AfterViewChecked {
   private keyUpSoundBuffer: AudioBuffer | null = null;
   keysPressed: { [key: string]: boolean } = {};
 
+  lastValueToSave: string = ""
+
+  saveSlot1 = "";
+  saveSlot2 = "";
+  saveSlot3 = "";
+
+  ipAddress = "192.168.123.23";
+
   constructor() {
     this.audioContext = new AudioContext();
     this.loadSound('assets/sounds/click.mp3', true); // Laden des KeyDown-Sounds
     this.loadSound('assets/sounds/release.mp3', false);  // Laden des KeyUp-Sounds
   }
 
-
-
-
-
-
   processCommand(command: string): void {
     const lowerCommand = command.toLowerCase();
+
     if (lowerCommand === 'help') {
-      this.commandHistory.push('Available commands: help, clear, hack, guess [password], dectohex [decimal]');
+      this.commandHistory.push('Available commands:');
+      this.commandHistory.push('[showip] - Shows current IP address');
+      this.commandHistory.push('[setslot {slotid 1-3}] - sets last value in [] in selected slot');
+      this.commandHistory.push('[getslot {slotid 1-3}] - Shows what is in selected slot');
+      this.commandHistory.push('[showallslots] - Shows all slots');
+      this.commandHistory.push('[showip] - Shows current IP address');
     } 
 
     else if (lowerCommand === 'clear') {
       this.commandHistory = [];
     } 
 
-    else if (lowerCommand.startsWith('dectohex ')) {
-      let value = parseInt(command.substring(9))
-      this.commandHistory.push(value + ': ' + value.toString(16));
+    else if (lowerCommand.startsWith('setslot ')) {
+      let slot = parseInt(command.substring(8))
+      if (slot == 1) { this.saveSlot1 = this.lastValueToSave}
+      if (slot == 2) { this.saveSlot2 = this.lastValueToSave}
+      if (slot == 3) { this.saveSlot3 = this.lastValueToSave}
+      this.commandHistory.push("Saved in slot: " + slot)
+    } 
+
+    else if (lowerCommand.startsWith('getslot ')) {
+      let slot = parseInt(command.substring(8));
+      if (slot === 1) {
+        if (this.saveSlot1) {
+          this.commandHistory.push(this.saveSlot1);
+        } else {
+          this.commandHistory.push("Nothing in Slot 1");
+        }
+      }
+      if (slot === 2) {
+        if (this.saveSlot2) {
+          this.commandHistory.push(this.saveSlot2);
+        } else {
+          this.commandHistory.push("Nothing in Slot 2");
+        }
+      }
+      if (slot === 3) {
+        if (this.saveSlot3) {
+          this.commandHistory.push(this.saveSlot3);
+        } else {
+          this.commandHistory.push("Nothing in Slot 3");
+        }
+      }
     }
 
-    else if (lowerCommand.startsWith('dectobin ')) {
-      let value = parseInt(command.substring(9))
-      this.commandHistory.push(value + ': ' + value.toString(2));
+    else if (lowerCommand.startsWith('showallslots')) {
+      this.commandHistory.push("Slot 1: " + this.saveSlot1);
+      this.commandHistory.push("Slot 2: " + this.saveSlot2);
+      this.commandHistory.push("Slot 3: " + this.saveSlot3);
+    }
+
+
+    else if (lowerCommand.startsWith('showip')) {
+      this.commandHistory.push("Ip Address: [" + this.ipAddress + "]");
+      this.lastValueToSave = this.ipAddress;
+    } 
+
+
+
+    else if (lowerCommand.startsWith('start')) {
+      this.commandHistory.push('Ur Started the game. Have fun Hacking the Server');
+      //let value = parseInt(command.substring(6))
     }
 
     else {
